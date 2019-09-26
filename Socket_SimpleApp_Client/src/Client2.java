@@ -6,8 +6,8 @@ import java.net.Socket;
 
 public class Client2 extends javax.swing.JFrame {
 
-    private static String serverName = "192.168.2.1";
-    private static int serverPort = 8081;
+    private static String serverName = "localhost";
+    private static int serverPort = 8082;
     private static Socket socket = null;
     private static ObjectOutputStream objectOutputStream = null;
     private static ObjectInputStream objectInputStream = null;
@@ -40,11 +40,9 @@ public class Client2 extends javax.swing.JFrame {
             while (true) {
                 try {
                     // send action message
-                    objectOutputStream.writeUTF("getJumlah");
                     objectOutputStream.flush();
                     // get jumlah
                     String jumlahMahasiswa = objectInputStream.readUTF();
-                    jTextFieldJumlah.setText(jumlahMahasiswa);
                     Thread.sleep(3000); // refresh every 3 second
                 } catch (IOException ex) {
                     System.out.println("Error : " + ex.getMessage());
