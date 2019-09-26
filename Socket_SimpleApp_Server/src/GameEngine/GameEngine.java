@@ -10,8 +10,8 @@ import java.util.List;
 import java.util.Random;
 
 public class GameEngine {
-	private static final int MAP_HEIGHT = 15;
-	private static final int MAP_WIDTH = 30;
+	public static final int MAP_HEIGHT = 15;
+	public static final int MAP_WIDTH = 30;
 	Cell[][] map;
 
 	private Robot[] playersRobots;
@@ -36,16 +36,6 @@ public class GameEngine {
 		currentNumberOfPlayer += 1;
 		return currentNumberOfPlayer;
 
-	}
-
-	public boolean isValid(Object action) {
-		for (Rule r :
-			rules) {
-			if (!r.isMoveValid(action)) {
-				return false;
-			}
-		}
-		return true;
 	}
 
 	public void executeActions(Action[] action) {
@@ -129,8 +119,9 @@ public class GameEngine {
 		for (int i = 0; i < MAP_HEIGHT; i++) {
 			for (int j = 0; j < MAP_WIDTH; j++) {
 				Cell mapCell = this.map[i][j];
-				if (cellIsKnown(player, i, j)) {
-					mapToReturn[i][j] = new Cell(mapCell.itemVisibleFor(player), mapCell.ore, mapCell.hole,i,j);
+				mapToReturn[i][j] = new Cell(mapCell.itemVisibleFor(player), mapCell.ore, mapCell.hole,i,j);
+				if (!cellIsKnown(player, i, j)) {
+					mapToReturn[i][j].known = false;
 				}
 			}
 		}

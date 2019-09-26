@@ -8,6 +8,7 @@ public class Cell {
 	public Item item;
 	public int ore;
 	public boolean hole;
+	public boolean known = true;
 	public Point coordinates;
 	public Cell(Item item, int ore, boolean hole, int x, int y) {
 		this.item = item;

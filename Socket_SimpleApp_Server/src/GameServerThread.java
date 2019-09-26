@@ -2,6 +2,7 @@
 import Actions.Action;
 import Actions.ActionFactory;
 import GameEngine.GameEngine;
+import GameEngine.Cell;
 import utils.Pair;
 
 import java.io.*;
@@ -50,11 +51,34 @@ public class GameServerThread extends Thread {
 	@Override
 	public void run() {
 		try {
-
+			getPlayerOutputStream(1).writeUTF(""+GameEngine.MAP_WIDTH+ " "+GameEngine.MAP_HEIGHT);
+			getPlayerOutputStream(2).writeUTF(""+GameEngine.MAP_WIDTH+ " "+GameEngine.MAP_HEIGHT);
 			while (true) {
 				try {
+					//init round
+					getPlayerOutputStream(1).writeUTF(""+GameEngine.scores[0]+ " "+GameEngine.scores[1]);
+					getPlayerOutputStream(2).writeUTF(""+GameEngine.scores[1]+ " "+GameEngine.scores[0]);
+					Cell[][] player1Map = engine.mapForPlayer(1);
+					Cell[][] player2Map = engine.mapForPlayer(2);
+					for (int i = 0; i < GameEngine.MAP_HEIGHT; i++) {
+						for (int j = 0; j < GameEngine.MAP_WIDTH; j++) {
+							Cell c1 = player1Map[i][j];
+							String oreP1 = "?";
+							Cell c2 = player2Map[i][j];
+							String oreP2 = "?";
+							if(c1.known){
+								oreP1 = Integer.toString(c1.ore);
+							}
+							if(c2.known){
+								oreP2 = Integer.toString(c2.ore);
+							}
+							getPlayerOutputStream(1).writeUTF(""+oreP1);
+							getPlayerOutputStream(2).writeUTF(""+oreP2);
 
-					//init streams
+							getPlayerOutputStream(1).writeUTF(c1.hole?"1":"0");
+							getPlayerOutputStream(2).writeUTF(c2.hole?"1":"0");
+						}
+					}
 
 					// wait for actions
 					String actionStringP1 = getPlayerInputStream(1).readUTF();
