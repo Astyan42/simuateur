@@ -4,7 +4,7 @@ import java.net.Socket;
 
 // SERVER : Multi Server
 // TIPE : Two-Way Communication (Client to Server, Server to Client)
-// Description : 
+// Description :
 // Example of Server that receive data from client and save it to List
 // and also send info total of Data to client
 public class Server implements Runnable {
@@ -34,10 +34,9 @@ public class Server implements Runnable {
     public void run() {
         client = new GameServerThread(this);
         try {
-            client.addPlayer(serverP2Socket.accept());
-            // wait until client socket connecting, then add new thread
-            client.addPlayer(serverP1Socket.accept());
-            System.out.println("new player");
+					client.addPlayer(serverP1Socket.accept());
+					client.addPlayer(serverP2Socket.accept());
+					System.out.println("new player");
         } catch (IOException e) {
             System.out.println("Error : " + e);
         }

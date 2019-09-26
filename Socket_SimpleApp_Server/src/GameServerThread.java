@@ -72,6 +72,7 @@ public class GameServerThread extends Thread {
 							if(c2.known){
 								oreP2 = Integer.toString(c2.ore);
 							}
+
 							getPlayerOutputStream(1).writeUTF(""+oreP1);
 							getPlayerOutputStream(2).writeUTF(""+oreP2);
 
