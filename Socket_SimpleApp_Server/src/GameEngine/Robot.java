@@ -8,10 +8,12 @@ public class Robot {
 	public Point coordinates=new Point();
 	public Items carriedItem= Items.NOTHING;
 	public int owner=-1;
+	public int robotId;
 	public boolean dead = false;
-	public Robot(Point coordinates, int owner) {
+	public Robot(Point coordinates, int owner, int robotId) {
 		this.coordinates = coordinates;
 		this.owner = owner;
+		this.robotId = robotId;
 	}
 
 	public boolean isInHQ(){

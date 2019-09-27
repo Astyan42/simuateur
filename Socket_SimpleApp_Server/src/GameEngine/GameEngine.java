@@ -8,13 +8,16 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class GameEngine {
+	public static final AtomicInteger idGenerator = new AtomicInteger(10);
 	public static final int MAP_HEIGHT = 15;
 	public static final int MAP_WIDTH = 30;
+	public int entityCount = 10;
 	Cell[][] map;
 
-	private Robot[] playersRobots;
+	public Robot[] playersRobots;
 	public static int[] scores = new int[2];
 	private static final int MAX_NUMBER_OF_PLAYER = 2;
 	private static final int RADAR_RANGE = 4;
@@ -90,8 +93,8 @@ public class GameEngine {
 
 		for (int i = 0; i < yValues.length; i++) {
 			Point coordinates = new Point(1, yValues[i]);
-			robotList[i] = new Robot(coordinates,1);
-			robotList[i+GameEngine.NUMBER_OF_ROBOTS] = new Robot(coordinates,2);
+			robotList[i] = new Robot(coordinates,1, i);
+			robotList[i+GameEngine.NUMBER_OF_ROBOTS] = new Robot(coordinates,2, i+GameEngine.NUMBER_OF_ROBOTS);
 		}
 		return robotList;
 	}
@@ -100,15 +103,16 @@ public class GameEngine {
 		int threshold = 15;
 		Cell[][] mapToReturn = new Cell[MAP_HEIGHT][MAP_WIDTH];
 		for (int i = 0; i < MAP_HEIGHT; i++) {
-			for (int j = 1; j < MAP_WIDTH; j++) {
+			for (int j = 0; j < MAP_WIDTH; j++) {
 				int oreProba = 5;
+				int numberOfOre = 0;
 				if (j >= threshold) {
 					oreProba = 75;
 				}
 				if (Math.random() * 100 > oreProba) {
-					int numberOfOre = Math.round((float)Math.random() * 4);
-					mapToReturn[i][j] = new Cell(new Item(-1, Items.NOTHING), numberOfOre, false,i,j);
+					numberOfOre = Math.round((float)Math.random() * 4);
 				}
+				mapToReturn[i][j] = new Cell(new Item(-1, Items.NOTHING), numberOfOre, false,i,j);
 			}
 		}
 		return mapToReturn;
@@ -129,11 +133,18 @@ public class GameEngine {
 	}
 
 	public boolean cellIsKnown(int player, int cellX, int cellY) {
-		for (int j = cellY-RADAR_RANGE, iteration=0; j <cellY+RADAR_RANGE ; j++, iteration++) {
-			for (int i = cellX-iteration; i <= cellX+iteration; i++) {
-				if(map[i][j].item.playerOwner == player && map[i][j].item.type == Items.RADAR){
+		for (int i = cellY-RADAR_RANGE, iteration=0; i <=cellY+RADAR_RANGE ; i++) {
+			for (int j = cellX-iteration; j <= cellX+iteration; j++) {
+				if(i > 0 && i < MAP_HEIGHT  && j > 0 && j < MAP_WIDTH
+					&& map[i][j].item.playerOwner == player && map[i][j].item.type == Items.RADAR){
 					return true;
 				}
+			}
+			if( i <= cellX) {
+				iteration++;
+			}
+			else{
+				iteration--;
 			}
 		}
 		return false;
@@ -145,6 +156,20 @@ public class GameEngine {
 
 	public boolean nextRound() {
 		this.currentRound++;
+		System.out.println( "========================= Round "+ this.currentRound +" ==========================="  );
 		return this.currentRound >= 200;
+	}
+
+	public int getEntityCount(int player) {
+		int count = NUMBER_OF_ROBOTS * MAX_NUMBER_OF_PLAYER;
+		Cell[][] mapPlayer = this.mapForPlayer(player);
+		for (int i = 0; i < MAP_HEIGHT; i++) {
+			for (int j = 0; j < MAP_WIDTH; j++) {
+				if(mapPlayer[i][j].item.type != Items.NOTHING){
+					count++;
+				}
+			}
+		}
+		return count;
 	}
 }

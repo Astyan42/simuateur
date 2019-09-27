@@ -17,15 +17,18 @@ public class RequestAction implements Action {
 	public RequestAction(String s, int actingRobot) {
 		requestedItem = Items.valueOf(Integer.parseInt(s));
 		this.actingRobot = actingRobot;
-		itemsCooldown = new HashMap<>();
-		HashMap<Items, Integer> player1Hashmap = new HashMap<>();
-		player1Hashmap.put(Items.RADAR, -1);
-		player1Hashmap.put(Items.TRAP, -1);
-		HashMap<Items, Integer> player2Hashmap = new HashMap<>();
-		player2Hashmap.put(Items.RADAR, -1);
-		player2Hashmap.put(Items.TRAP, -1);
-		itemsCooldown.put(1, player1Hashmap);
-		itemsCooldown.put(2, player2Hashmap);
+	}
+
+	 static {
+		 itemsCooldown = new HashMap<>();
+		 HashMap<Items, Integer> player1Hashmap = new HashMap<>();
+		 player1Hashmap.put(Items.RADAR, -1);
+		 player1Hashmap.put(Items.TRAP, -1);
+		 HashMap<Items, Integer> player2Hashmap = new HashMap<>();
+		 player2Hashmap.put(Items.RADAR, -1);
+		 player2Hashmap.put(Items.TRAP, -1);
+		 itemsCooldown.put(1, player1Hashmap);
+		 itemsCooldown.put(2, player2Hashmap);
 	}
 
 	@Override
@@ -36,9 +39,9 @@ public class RequestAction implements Action {
 		if(r.coordinates.x != 1){
 			new MoveAction(1, r.coordinates.y, this.actingRobot).execute(map,robots);
 		}
-		else if(itemsCooldown.get(r.owner).get(requestedItem) == -1){
+		else if(itemsCooldown.get(r.owner).get(requestedItem) == 0){
 			r.carriedItem = requestedItem;
-			itemsCooldown.get(r.owner).put(requestedItem,0);
+			itemsCooldown.get(r.owner).put(requestedItem,GLOBAL_CD);
 		}
 	}
 
@@ -47,16 +50,17 @@ public class RequestAction implements Action {
 		return actingRobot;
 	}
 
+	public static HashMap<Items,Integer> getCooldownForPlayer(int player){
+		return itemsCooldown.get(player);
+	}
+
 	public static void HandleItemCD(){
 		for (HashMap<Items, Integer> itemCD:
 				 itemsCooldown.values()) {
 			for (Map.Entry<Items, Integer> entry:
 					 itemCD.entrySet()) {
-				if(entry.getValue() != -1){
-					entry.setValue(entry.getValue()+1);
-				}
-				if(entry.getValue() == GLOBAL_CD){
-					entry.setValue(-1);
+				if(entry.getValue() != 0){
+					entry.setValue(entry.getValue()-1);
 				}
 			}
 		}

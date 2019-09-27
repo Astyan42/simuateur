@@ -20,6 +20,8 @@ public class Server implements Runnable {
         try {
             serverP1Socket = new ServerSocket(portP1);
             serverP2Socket = new ServerSocket(portP2);
+            serverP1Socket.setReceiveBufferSize(99262144);
+            serverP2Socket.setReceiveBufferSize(99262144);
             System.out.println("Server started on port " + serverP1Socket.getLocalPort() + "...");
             System.out.println("Server started on port " + serverP2Socket.getLocalPort() + "...");
             System.out.println("Waiting for clients...");
@@ -35,10 +37,12 @@ public class Server implements Runnable {
         client = new GameServerThread(this);
         try {
 					client.addPlayer(serverP1Socket.accept());
+					System.out.println("player 1 connected");
 					client.addPlayer(serverP2Socket.accept());
+					System.out.println("player 2 connected");
 					System.out.println("new player");
         } catch (IOException e) {
-            System.out.println("Error : " + e);
+            e.printStackTrace();
         }
         client.start();
     }

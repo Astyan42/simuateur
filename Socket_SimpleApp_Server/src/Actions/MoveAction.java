@@ -36,7 +36,8 @@ public class MoveAction implements Action {
 		robot.coordinates = getNextLocation(xCoordinate, yCoordinate, this.actionCoordinates);
 		if(robot.coordinates.x == 1 && robot.carriedItem == Items.ORE){
 			robot.carriedItem = Items.NOTHING;
-			GameEngine.scores[robot.owner] += 1;
+			System.out.println("robot "+robot.robotId+" scores");
+			GameEngine.scores[robot.owner-1] += 1;
 		}
 	}
 

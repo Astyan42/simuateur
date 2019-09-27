@@ -3,6 +3,7 @@ package GameEngine;
 import enumerations.Items;
 
 public class Item {
+	public int entityId = GameEngine.idGenerator.getAndIncrement();
 	public int playerOwner;
 	public Items type;
 
